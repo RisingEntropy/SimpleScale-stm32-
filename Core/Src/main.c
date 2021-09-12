@@ -91,7 +91,11 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 	oled_init();
-	show_price_choose();
+	oled_clear();
+	show_badge();
+	extern int chosen_fruit;
+	chosen_fruit = 2;
+	show_scale();
   /* USER CODE END 2 */
 
   /* Infinite loop */

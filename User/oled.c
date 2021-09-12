@@ -168,3 +168,8 @@ void oled_show_character(uint8_t x,uint8_t y,uint8_t ch){
 		oled_data(chn16X16[ch*2+1][i]);
 	}
 }
+
+void show_badge(){
+	
+}
+

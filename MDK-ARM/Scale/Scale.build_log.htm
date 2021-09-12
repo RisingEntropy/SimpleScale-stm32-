@@ -28,21 +28,23 @@ Project File Date:  09/12/2021
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Scale'
 compiling panels.c...
-..\User\panels.h(8): warning:  #1295-D: Deprecated declaration show_price_choose - give arg types
+..\User\panels.h(4): warning:  #1295-D: Deprecated declaration show_price_choose - give arg types
   void show_price_choose();//单价选择界面
-..\User\panels.h(9): warning:  #1295-D: Deprecated declaration show_scale - give arg types
+..\User\panels.h(5): warning:  #1295-D: Deprecated declaration show_scale - give arg types
   void show_scale();//称重界面
-..\User\panels.h(11): warning:  #1-D: last line of file ends without a newline
+..\User\panels.h(7): warning:  #1-D: last line of file ends without a newline
   #endif
 ..\User\oled.h(12): warning:  #1295-D: Deprecated declaration oled_clear - give arg types
   void oled_clear();
-..\User\panels.c(41): warning:  #1-D: last line of file ends without a newline
+..\User\oled.h(14): warning:  #1295-D: Deprecated declaration show_badge - give arg types
+  void show_badge();
+..\User\panels.c(60): warning:  #1-D: last line of file ends without a newline
   }//称重界面
-..\User\panels.c: 5 warnings, 0 errors
+..\User\panels.c: 6 warnings, 0 errors
 linking...
-Program Size: Code=4916 RO-data=3004 RW-data=20 ZI-data=1108  
+Program Size: Code=4608 RO-data=3004 RW-data=20 ZI-data=1108  
 FromELF: creating hex file...
-"Scale\Scale.axf" - 0 Error(s), 5 Warning(s).
+"Scale\Scale.axf" - 0 Error(s), 6 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -66,7 +68,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.5.0
       Include file:  CMSIS\Core\Include\tz_context.h
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

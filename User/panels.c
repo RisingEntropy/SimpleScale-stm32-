@@ -4,7 +4,7 @@ const double price_watermelon = 2.0;
 const double price_apple = 2.5;
 const double price_rawegg = 0.5;
 
-int chosen_fruit = 0;
+int chosen_fruit;
 void show_price_choose(){
 	oled_clear();
 	oled_show_character(0,0,0);
@@ -37,5 +37,24 @@ void show_price_choose(){
 	/*生瓜蛋子0.5/g*/
 }//单价选择界面
 void show_scale(){
-
+	oled_show_character(0,0,14);
+	oled_show_character(16,0,15);
+	oled_show_character(32,0,4);
+	
+	oled_show_character(0,2,16);
+	oled_show_character(16,2,17);
+	oled_show_character(32,2,4);
+	
+	if(chosen_fruit==0){
+		oled_show_character(16+10+10,4,5);
+		oled_show_character(32+10+10,4,6);
+	}else if(chosen_fruit==1){
+		oled_show_character(16+10+10,4,7);
+		oled_show_character(32+10+10,4,8);
+	}else{
+		oled_show_character(16+10+10,4,9);
+		oled_show_character(32+10+10,4,10);
+		oled_show_character(48+10+10,4,11);
+		oled_show_character(64+10+10,4,12);
+	}
 }//称重界面
