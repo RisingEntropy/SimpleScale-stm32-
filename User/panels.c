@@ -5,8 +5,8 @@ const double price_apple = 2.5;
 const double price_rawegg = 0.5;
 
 int chosen_fruit;
+int interface;
 void show_price_choose(){
-	oled_clear();
 	oled_show_character(0,0,0);
 	oled_show_character(16,0,1);
 	oled_show_character(32,0,2);
@@ -14,7 +14,9 @@ void show_price_choose(){
 	oled_show_character(64,0,4);
 	
 	/*单价选择：*/
-	
+	for(char i = 0;i<=2;i++){
+		oled_clear_specific_area(0,2*i+2);
+	}
 	oled_show_character(0,2*chosen_fruit+2,19);//表示选中的点
 	
 	oled_show_character(16,2,5);
@@ -40,11 +42,11 @@ void show_scale(){
 	oled_show_character(0,0,14);
 	oled_show_character(16,0,15);
 	oled_show_character(32,0,4);
-	
+	/*重量：*/
 	oled_show_character(0,2,16);
 	oled_show_character(16,2,17);
 	oled_show_character(32,2,4);
-	
+	/*价格：*/
 	if(chosen_fruit==0){
 		oled_show_character(16+10+10,4,5);
 		oled_show_character(32+10+10,4,6);
@@ -58,3 +60,6 @@ void show_scale(){
 		oled_show_character(64+10+10,4,12);
 	}
 }//称重界面
+char * to_string(double num){
+	return 0;
+}

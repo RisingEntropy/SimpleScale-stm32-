@@ -96,7 +96,7 @@ void oled_show_string(uint8_t x, uint8_t y, char ch[], uint8_t TextSize)
 	{
 		case 1:
 		{
-			while(ch[j] != '\0')
+			while(ch[j] != 0)
 			{
 				c = ch[j] - 32;
 				if(x > 126)
@@ -172,4 +172,6 @@ void oled_show_character(uint8_t x,uint8_t y,uint8_t ch){
 void show_badge(){
 	
 }
-
+void oled_clear_specific_area(uint8_t x,uint8_t y){
+	oled_show_string(x,y,"  ",2);
+}
