@@ -169,9 +169,6 @@ void oled_show_character(uint8_t x,uint8_t y,uint8_t ch){
 	}
 }
 
-void show_badge(){
-	
-}
 void oled_clear_specific_area(uint8_t x,uint8_t y){
 	oled_show_string(x,y,"  ",2);
 }

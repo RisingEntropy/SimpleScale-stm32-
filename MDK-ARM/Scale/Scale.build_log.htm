@@ -9,12 +9,12 @@ License Information: D HY, UESTC, LIC=----
  
 Tool Versions:
 Toolchain:       MDK-Lite  Version: 5.35.0.2
-Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
-C Compiler:      Armcc.exe V5.06 update 7 (build 960)
-Assembler:       Armasm.exe V5.06 update 7 (build 960)
-Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
-Library Manager: ArmAr.exe V5.06 update 7 (build 960)
-Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
+Toolchain Path:  C:\Keil_v5\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.16
+Assembler:       Armasm.exe V6.16
+Linker/Locator:  ArmLink.exe V6.16
+Library Manager: ArmAr.exe V6.16
+Hex Converter:   FromElf.exe V6.16
 CPU DLL:         SARMCM3.DLL V5.35.0.2
 Dialog DLL:      DCM.DLL V1.17.3.0
 Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.9.0
@@ -22,27 +22,16 @@ Dialog DLL:      TCM.DLL V1.53.0.0
  
 <h2>Project:</h2>
 D:\Project\TI\Scale\MDK-ARM\Scale.uvprojx
-Project File Date:  09/14/2021
+Project File Date:  09/21/2021
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+*** Using Compiler 'V6.16', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Scale'
 compiling main.c...
-..\User\oled.h(12): warning:  #1295-D: Deprecated declaration oled_clear - give arg types
-  void oled_clear();
-..\User\oled.h(14): warning:  #1295-D: Deprecated declaration show_badge - give arg types
-  void show_badge();
-..\User\panels.h(4): warning:  #1295-D: Deprecated declaration show_price_choose - give arg types
-  void show_price_choose();//单价选择界面
-..\User\panels.h(5): warning:  #1295-D: Deprecated declaration show_scale - give arg types
-  void show_scale();//称重界面
-..\User\panels.h(7): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Src/main.c: 5 warnings, 0 errors
 linking...
-Program Size: Code=8124 RO-data=3004 RW-data=32 ZI-data=1192  
+Program Size: Code=12962 RO-data=3030 RW-data=12 ZI-data=1228  
 FromELF: creating hex file...
-"Scale\Scale.axf" - 0 Error(s), 5 Warning(s).
+"Scale\Scale.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -66,7 +55,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.5.0
       Include file:  CMSIS\Core\Include\tz_context.h
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>

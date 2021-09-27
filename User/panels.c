@@ -60,6 +60,3 @@ void show_scale(){
 		oled_show_character(64+10+10,4,12);
 	}
 }//≥∆÷ÿΩÁ√Ê
-char * to_string(double num){
-	return 0;
-}

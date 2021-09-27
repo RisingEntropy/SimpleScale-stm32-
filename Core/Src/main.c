@@ -25,7 +25,7 @@
 #include "oled.h"
 #include "panels.h"
 #include "stdio.h"
-uint16_t adc_value = 0,adc_volt = 0;
+uint32_t adc_value = 0,adc_volt = 0;
 char adc_success = 0,adc_on;
 
 /* USER CODE END Includes */
@@ -66,9 +66,44 @@ static void MX_ADC1_Init(void);
 /* USER CODE BEGIN 0 */
 extern int chosen_fruit;
 extern int interface;
+extern const double price_watermelon;
+extern const double price_apple;
+extern const double price_rawegg;
 void delay(int dur){
 	while(dur--);
 }
+double max(double a,double b){
+	return a>b?a:b;
+}
+char ringing = 0;
+void ring_beep(){
+	if(ringing)return;
+	ringing = 1;
+	HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
+}
+void stop_beep(){
+	if(!ringing)return;
+	ringing = 0;
+	HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_RESET);
+}
+uint32_t adc_getValue(){
+	adc_success = 0;adc_on = 1;
+	HAL_ADC_Start(&hadc1);
+	uint32_t ret = 0;
+	if(HAL_ADC_PollForConversion(&hadc1,100)==HAL_OK){
+		adc_success = 1;
+		for(int i = 0;i<200;i++){
+			adc_value = HAL_ADC_GetValue(&hadc1);
+			adc_volt = adc_value*3300/4096;
+			ret+=adc_volt;
+			delay(100);
+		}
+		return ret/200;
+	}
+	adc_success = 0;
+	return 0;
+}
+double skin = 0.0;
 void scan(){
 	if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0)==GPIO_PIN_RESET){
 		delay(1000);
@@ -127,19 +162,20 @@ void scan(){
 			
 		}
 	}
-}
-uint16_t adc_getValue(){
-	adc_success = 0;adc_on = 1;
-	HAL_ADC_Start(&hadc1);
-	if(HAL_ADC_PollForConversion(&hadc1,100)==HAL_OK){
-		adc_success = 1;
-		adc_value = HAL_ADC_GetValue(&hadc1);
-		adc_volt = adc_value*3300/4096;
-		return adc_volt;
+		if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_4)==GPIO_PIN_RESET){
+		delay(1000);
+		if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_4)==GPIO_PIN_RESET){
+			while(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_4)==GPIO_PIN_RESET){
+				HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_RESET);
+			}
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);
+			if(interface==0)return; 
+			uint32_t vol = adc_getValue();
+			skin = max(vol*0.3248-0.3643,0.0);
+		}
 	}
-	adc_success = 0;
-	return 0;
 }
+
 char res[30];
 /* USER CODE END 0 */
 
@@ -178,7 +214,7 @@ int main(void)
 	oled_clear();
 	interface^=1;
 	show_scale();
-
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -187,14 +223,34 @@ int main(void)
   {
 		scan();
 		if(interface == 1){
-			uint16_t vol = adc_getValue();
+			uint32_t vol = adc_getValue();
 			if(!adc_success)oled_show_string(48,0,"adc_fail",2);
 			else {
-				oled_clear_specific_area(48,0);
-				sprintf(res,"%d mv",vol);
+				//oled_clear_specific_area(48,0);
+				//oled_clear_specific_area(64,0);
+				//oled_clear_specific_area(80,0);
+				//oled_clear_specific_area(88,0);
+				//oled_clear_specific_area(96,0);
+				double weight = max(vol*0.3248-0.3643-skin,0.0);
+				sprintf(res,"%.1lf g  ",weight);
 				oled_show_string(48,0,res,2);
+				for(int i = 0;i<30;i++)res[i] = 0;
+				if(chosen_fruit==0){
+					sprintf(res,"%.2lf   ",weight*price_watermelon);
+				}else if(chosen_fruit==1){
+					sprintf(res,"%.2lf   ",weight*price_apple);
+				}else{
+					sprintf(res,"%.2lf   ",weight*price_rawegg);
+				}
+				oled_show_string(48,2,res,2);
+				if(vol*0.3248-0.3643>900.0){
+					ring_beep();
+				}else{
+					stop_beep();
+				}
 			}
 		}
+		HAL_Delay(300);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -344,6 +400,9 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+
   /*Configure GPIO pin : PC13 */
   GPIO_InitStruct.Pin = GPIO_PIN_13;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -351,11 +410,24 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA0 PA5 PA6 PA7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
+  /*Configure GPIO pin : PA0 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PA4 PA5 PA6 PA7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB0 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 

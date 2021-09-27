@@ -3,5 +3,4 @@
 
 void show_price_choose();//单价选择界面
 void show_scale();//称重界面
-char* to_string(double num);
 #endif
