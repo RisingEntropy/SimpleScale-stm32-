@@ -25,6 +25,7 @@
 #include "oled.h"
 #include "panels.h"
 #include "stdio.h"
+#include "math.h"
 uint32_t adc_value = 0,adc_volt = 0;
 char adc_success = 0,adc_on;
 
@@ -86,19 +87,33 @@ void stop_beep(){
 	ringing = 0;
 	HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_RESET);
 }
+double values[500];
 uint32_t adc_getValue(){
 	adc_success = 0;adc_on = 1;
 	HAL_ADC_Start(&hadc1);
-	uint32_t ret = 0;
+	double avg = 0;
 	if(HAL_ADC_PollForConversion(&hadc1,100)==HAL_OK){
 		adc_success = 1;
-		for(int i = 0;i<200;i++){
+		for(int i = 0;i<500;i++){
 			adc_value = HAL_ADC_GetValue(&hadc1);
 			adc_volt = adc_value*3300/4096;
-			ret+=adc_volt;
+			avg+=adc_volt;
+			values[i] = adc_volt;
 			delay(100);
 		}
-		return ret/200;
+		avg/=500;
+		double sigma = 0;
+		for(int i = 0;i<500;i++){
+			sigma+=(avg-values[i])*(avg-values[i]);
+		}
+		sigma/=500;sigma = sqrt(sigma);
+		double cnt = 0;double useful_data = 0;
+		for(int i = 0;i<500;i++){
+			if(values[i]>avg+2*sigma||values[i]<avg-2*sigma)continue;
+			cnt+=1.0;useful_data+=values[i];
+		}
+		useful_data/=cnt;
+		return useful_data;
 	}
 	adc_success = 0;
 	return 0;
@@ -171,7 +186,7 @@ void scan(){
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);
 			if(interface==0)return; 
 			uint32_t vol = adc_getValue();
-			skin = max(vol*0.3248-0.3643,0.0);
+			skin = max(vol*0.3271,0.0);
 		}
 	}
 }
@@ -219,7 +234,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);
+	while (1)
   {
 		scan();
 		if(interface == 1){
@@ -231,7 +247,7 @@ int main(void)
 				//oled_clear_specific_area(80,0);
 				//oled_clear_specific_area(88,0);
 				//oled_clear_specific_area(96,0);
-				double weight = max(vol*0.3248-0.3643-skin,0.0);
+				double weight = max(vol*0.3271-skin,0.0);
 				sprintf(res,"%.1lf g  ",weight);
 				oled_show_string(48,0,res,2);
 				for(int i = 0;i<30;i++)res[i] = 0;
@@ -243,7 +259,7 @@ int main(void)
 					sprintf(res,"%.2lf   ",weight*price_rawegg);
 				}
 				oled_show_string(48,2,res,2);
-				if(vol*0.3248-0.3643>900.0){
+				if(vol*0.3271-0.8713>900){
 					ring_beep();
 				}else{
 					stop_beep();
@@ -398,7 +414,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
